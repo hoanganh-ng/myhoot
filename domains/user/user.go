@@ -9,7 +9,7 @@ func (u User) IsAdmin() bool {
 	return u.isAdmin
 }
 
-func (u *User) SetName(newName string) {
+func (u *User) ChangeName(newName string) {
 	u.name = newName
 }
 

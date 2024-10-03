@@ -1,19 +1,18 @@
 package game
 
-import "github.com/hoanganhnguyen17/myhoot/domains/user"
+import (
+	"github.com/hoanganhnguyen17/myhoot/domains/user"
+)
 
 type Player struct {
-	user.User
-	game *Game
+	*user.User
+	answerChannel chan<- Symbol
 }
 
-func (p Player) InGame() bool {
-	return p.game != nil
+func (p Player) AnswerQuestion(answer Symbol) {
+	p.answerChannel <- answer
 }
 
-func (p Player) SubmitAnswer(
-	question Question,
-	answer Answer,
-) {
-	p.game.ReceiveAnswer()
+func (p *Player) Listen(channel chan<- Symbol) {
+	p.answerChannel = channel
 }
