@@ -20,6 +20,16 @@ func (q Question) Value() string {
 	return q.value
 }
 
+func (q Question) RightAnser() Answer {
+	var rightAnswer Answer
+	for i := 0; i < len(q.listAnswer); i++ {
+		if q.listAnswer[i].IsCorrect() {
+			rightAnswer = q.listAnswer[i]
+		}
+	}
+	return rightAnswer
+}
+
 func (q Question) ListAnswer(shuffle bool) []Answer {
 	if !shuffle {
 		return q.listAnswer

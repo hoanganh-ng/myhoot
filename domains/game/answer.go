@@ -9,6 +9,11 @@ const (
 	Rectangle
 )
 
+type AnswerFromPlayer struct {
+	playerName string
+	symbol     Symbol
+}
+
 type Answer struct {
 	value     string
 	isCorrect bool

@@ -1,9 +1,12 @@
 package game
 
 import (
+	"time"
+
 	"github.com/google/uuid"
-	"github.com/hoanganhnguyen17/myhoot/helpers"
 )
+
+const rightAnswerMaxPoint uint32 = 5 * 1000 //max is reached when player anwser in 0 miliseconds
 
 type Participant interface {
 	ReceiveLeaderboard()
@@ -14,7 +17,7 @@ type Game struct {
 	state           State
 	manager         Manager
 	currentQuestion int
-	players         []Player
+	players         map[string]*Player
 	questions       []Question
 	leaderboard     Leaderboard
 }
@@ -36,18 +39,59 @@ func (game *Game) onStart() error {
 }
 
 func (game *Game) startReceiveAnswer() error {
-	return nil
+	answerChannel := make(chan AnswerFromPlayer)
+	defer close(answerChannel)
+	closeChannel := make(chan int8)
+	for _, player := range game.players {
+		go player.Listen(answerChannel, closeChannel)
+	}
+	currentQuestion, _ := game.CurrentQuestion()
+	startTime := time.Now()
+	answered := 0
+	for {
+		select {
+		case playersAnswer := <-answerChannel:
+			addPoint := game.calcAddPoint(
+				currentQuestion.RightAnser().Symbol == playersAnswer.symbol,
+				time.Since(startTime).Milliseconds(),
+			)
+			game.leaderboard.AddPoint(
+				playersAnswer.playerName,
+				addPoint,
+			)
+			answered += 1
+			if answered == len(game.players) {
+				close(closeChannel)
+				return nil
+			}
+		case <-time.After(5 * time.Second):
+			close(closeChannel)
+			return ErrQuestionTimeout
+		}
+	}
+}
+func (game *Game) calcAddPoint(
+	isCorrect bool,
+	answerDuration int64, //miliseconds
+) uint32 {
+	if !isCorrect {
+		return 0
+	}
+	return rightAnswerMaxPoint - uint32(answerDuration)
 }
 
-func (game *Game) PlayerJoin(player Player) error {
+func (game *Game) PlayerJoin(player *Player) error {
 	if !game.state.Is(Created) {
 		return ErrPlayerCannotJoinTheGame
 	}
-	var added bool
-	game.players, added = helpers.AddIfNotExist(game.players, player)
-	if !added {
-		return ErrPlayerIsJoined
+	if len(game.players) == 50 {
+		return ErrPlayerCannotJoinTheGame
 	}
+	_, ok := game.players[player.Name()]
+	if ok {
+		return ErrPlayerIsAdded
+	}
+	game.players[player.Name()] = player
 	return nil
 }
 
@@ -66,7 +110,7 @@ func (game *Game) onNextQuestion() error {
 		return ErrCannotGoToTheNextQuestion
 	}
 	game.currentQuestion += 1
-	return nil
+	return game.startReceiveAnswer()
 }
 
 func (game Game) CurrentQuestion() (Question, error) {
