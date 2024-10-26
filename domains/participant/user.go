@@ -1,4 +1,4 @@
-package user
+package participant
 
 type User struct {
 	name    string
