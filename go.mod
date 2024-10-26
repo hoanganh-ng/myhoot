@@ -1,4 +1,4 @@
-module github.com/hoanganhnguyen17/myhoot
+module github.com/hoanganh-ng/myhoot
 
 go 1.21.12
 

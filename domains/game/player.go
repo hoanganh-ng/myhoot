@@ -2,7 +2,7 @@ package game
 
 import (
 	"github.com/google/uuid"
-	"github.com/hoanganhnguyen17/myhoot/domains/participant"
+	"github.com/hoanganh-ng/myhoot/domains/participant"
 )
 
 type Player struct {

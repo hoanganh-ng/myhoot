@@ -1,6 +1,6 @@
 package game
 
-import "github.com/hoanganhnguyen17/myhoot/domains/participant"
+import "github.com/hoanganh-ng/myhoot/domains/participant"
 
 type Manager struct {
 	*participant.User
