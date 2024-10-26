@@ -13,15 +13,12 @@ type Player struct {
 func (p Player) AnswerQuestion(
 	questionID uuid.UUID,
 	answer Symbol,
-) {
-	p.answerChannel <- AnswerFromPlayer{p.Name(), answer}
-}
-func (p Player) Is(other any) bool {
-	otherPlayer, ok := other.(Player)
-	if !ok {
-		return false
+) error {
+	if p.answerChannel == nil {
+		return ErrQuestionTimeout
 	}
-	return p.Name() == otherPlayer.Name()
+	p.answerChannel <- AnswerFromPlayer{p.Name(), answer}
+	return nil
 }
 
 func (p *Player) Listen(
@@ -29,11 +26,7 @@ func (p *Player) Listen(
 	stopAnswerChan <-chan int8,
 ) {
 	p.answerChannel = answerChan
-	for {
-		select {
-		case <-stopAnswerChan:
-			p.answerChannel = nil
-			return
-		}
+	for range stopAnswerChan {
+		p.answerChannel = nil
 	}
 }
