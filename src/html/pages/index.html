@@ -1,0 +1,43 @@
+{{template "root" .}} {{define "content"}}
+<div
+  class="flex w-screen h-screen p-4 justify-center items-center dark:bg-slate-800"
+>
+  <div class="flex items-center space-x-2">
+    <span class="text-gray-600 dark:text-gray-400">Light</span>
+
+    <!-- Toggle Switch Container -->
+    <div
+      class="relative w-12 h-6 bg-gray-300 dark:bg-gray-700 rounded-full cursor-pointer transition-colors duration-300 ease-in-out"
+      onclick="toggleDarkMode()"
+    >
+      <!-- Toggle Knob -->
+      <div
+        class="absolute top-0.5 left-0.5 w-5 h-5 bg-white dark:bg-gray-400 rounded-full shadow-md transition-transform transform duration-300 ease-in-out"
+        id="toggle-knob"
+      ></div>
+    </div>
+
+    <span class="text-gray-600 dark:text-gray-400">Dark</span>
+  </div>
+  <div class="container">
+    <div class="columns-md">
+      <h1
+        class="text-3xl text-center dark:text-slate-50 text-slate-900 font-bold"
+      >
+        Welcome to Myhoot!
+      </h1>
+    </div>
+  </div>
+  <!-- ... -->
+</div>
+{{end}} {{define "js"}}
+<script>
+  function toggleDarkMode() {
+    // Toggle the 'dark' class on the root <html> element
+    document.documentElement.classList.toggle("dark");
+
+    // Move the knob based on the theme
+    document.getElementById("toggle-knob").classList.toggle("translate-x-6");
+  }
+</script>
+{{end}}

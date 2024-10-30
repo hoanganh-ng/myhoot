@@ -13,15 +13,16 @@ func (gc *GameController) HomeController(
 	w http.ResponseWriter,
 	req *http.Request,
 ) {
-	tmpl, err := template.ParseFiles("./src/html/index.html", "./src/html/components.html")
+	tmpl, err := template.New("index.html").ParseFiles(
+		"./src/html/pages/index.html",
+		"./src/html/layouts/root.html",
+		// "./src/html/blocks/head.html",
+		// "./src/html/blocks/css.html",
+	)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "something went wrong.", http.StatusInternalServerError)
 		return
-	}
-	err = tmpl.ExecuteTemplate(w, "DarkModeSwitch", nil)
-	if err != nil {
-		log.Println(err)
 	}
 	err = tmpl.Execute(w, nil)
 	if err != nil {
