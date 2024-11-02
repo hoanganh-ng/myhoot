@@ -8,8 +8,11 @@ type Manager struct {
 }
 
 func (manager *Manager) CreateGame() error {
-	newGame := New()
-	manager.game = newGame
+	if manager.game != nil {
+		return ErrAGameIsNotRelease
+	}
+	nGame := newGame()
+	manager.game = nGame
 	return nil
 }
 

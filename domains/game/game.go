@@ -6,7 +6,10 @@ import (
 	"github.com/google/uuid"
 )
 
-const rightAnswerMaxPoint uint32 = 5 * 1000 //max is reached when player anwser in 0 miliseconds
+const (
+	rightAnswerMaxPoint       uint32 = 5 * 1000 //max is reached when player anwser in 0 miliseconds
+	defaultGamePasswordLength int    = 5
+)
 
 type Participant interface {
 	ReceiveLeaderboard()
@@ -15,22 +18,46 @@ type Participant interface {
 type Game struct {
 	id              uuid.UUID
 	state           State
-	manager         Manager
+	manager         *Manager
 	currentQuestion int
 	players         map[string]*Player
 	questions       []Question
 	leaderboard     Leaderboard
+	pwd             string
 }
 
-func New() *Game {
-	newGame := Game{
-		id: uuid.New(),
+func (game Game) Authenticate(pwd string) bool {
+	return game.pwd == pwd
+}
+
+func (game Game) CurrentQuestion() (Question, error) {
+	var q Question
+	if !game.state.Is(Started) {
+		return q, ErrGameIsNotStartYet
 	}
-	newGame.state = CreatedState{&newGame}
-	return &newGame
+	q = game.questions[game.currentQuestion-1]
+	return q, nil
+}
+
+func (game *Game) OnPlayerRequestJoin(player *Player) error {
+	if !game.state.Is(Created) {
+		return ErrPlayerCannotJoinTheGame
+	}
+	if len(game.players) == 50 {
+		return ErrPlayerCannotJoinTheGame
+	}
+	_, ok := game.players[player.Name()]
+	if ok {
+		return ErrPlayerIsAdded
+	}
+	game.players[player.Name()] = player
+	return nil
 }
 
 func (game *Game) onStart() error {
+	if game.questions == nil {
+		return ErrGameHasNoQuestion
+	}
 	err := game.state.Started()
 	if err == nil {
 		game.currentQuestion = 1
@@ -70,6 +97,7 @@ func (game *Game) startReceiveAnswer() error {
 		}
 	}
 }
+
 func (game *Game) calcAddPoint(
 	isCorrect bool,
 	answerDuration int64, //miliseconds
@@ -78,21 +106,6 @@ func (game *Game) calcAddPoint(
 		return 0
 	}
 	return rightAnswerMaxPoint - uint32(answerDuration)
-}
-
-func (game *Game) PlayerJoin(player *Player) error {
-	if !game.state.Is(Created) {
-		return ErrPlayerCannotJoinTheGame
-	}
-	if len(game.players) == 50 {
-		return ErrPlayerCannotJoinTheGame
-	}
-	_, ok := game.players[player.Name()]
-	if ok {
-		return ErrPlayerIsAdded
-	}
-	game.players[player.Name()] = player
-	return nil
 }
 
 func (game *Game) setQuestionList(
@@ -111,15 +124,6 @@ func (game *Game) onNextQuestion() error {
 	}
 	game.currentQuestion += 1
 	return game.startReceiveAnswer()
-}
-
-func (game Game) CurrentQuestion() (Question, error) {
-	var q Question
-	if !game.state.Is(Started) {
-		return q, ErrGameIsNotStartYet
-	}
-	q = game.questions[game.currentQuestion-1]
-	return q, nil
 }
 
 func (game *Game) updateState(newState State) {

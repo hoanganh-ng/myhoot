@@ -1,13 +1,13 @@
 package game
 
-import (
-	"github.com/google/uuid"
-)
-
 func (g Game) State() State {
 	return g.state
 }
 
-func (g Game) ID() uuid.UUID {
-	return g.id
+func (g Game) ID() string {
+	return g.id.String()
+}
+
+func (g Game) Manager() string {
+	return g.manager.Name()
 }
