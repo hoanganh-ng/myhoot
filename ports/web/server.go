@@ -8,21 +8,25 @@ import (
 )
 
 type HTTPServer struct {
-	router         *mux.Router
-	gameController *GameController
+	router              *mux.Router
+	gameController      *GameController
+	utilitiesController *UtilitiesController
 }
 
 func NewHTTPServer() (*HTTPServer, error) {
 	gameController := &GameController{}
+	utilitiesController := &UtilitiesController{}
 	router := mux.NewRouter()
 	router.PathPrefix("/static/").Handler(
 		http.StripPrefix("/static/",
 			http.FileServer(http.Dir("./static/"))),
 	)
 	router.HandleFunc("/", gameController.HomeController)
+	router.HandleFunc("/page-not-found", utilitiesController.PageNotFound)
 	return &HTTPServer{
-		router:         router,
-		gameController: gameController,
+		router:              router,
+		gameController:      gameController,
+		utilitiesController: utilitiesController,
 	}, nil
 }
 

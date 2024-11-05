@@ -1,0 +1,30 @@
+@keyframes move {
+  0% {
+    transform: translate(var(--pre-x-move), var(--pre-y-move))
+      rotate(var(--pre-rotation));
+  }
+  100% {
+    transform: translate(var(--x-move), var(--y-move)) rotate(var(--rotation)); /* Move to final position */
+  }
+}
+
+.root-container {
+  background-color: #f0f0f0; /* Fallback color */
+  position: relative;
+  overflow: hidden;
+}
+
+.character {
+  position: absolute;
+  font-size: 2em; /* Adjust the size as needed */
+  opacity: 0.7; /* Light opacity for better visibility */
+  animation: var(--anim);
+  color: rgba(0, 0, 0, 0.7); /* Dark color for light theme */
+}
+
+@media (prefers-color-scheme: dark) {
+  .character {
+    opacity: 0.4; /* Less visible in dark mode */
+    color: rgba(255, 255, 255, 0.4); /* Light color for dark theme */
+  }
+}

@@ -1,17 +1,131 @@
 {{define "root"}}
 <!DOCTYPE html>
 <html lang="en" class="dark">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MyHoot</title>
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
-    <link rel="stylesheet" href="/static/css/root.css" />
-    {{block "styles" .}}{{end}}
-    <script src="/static/js/htmx.min.js"></script>
-  </head>
-  <body>
-    {{block "content" .}} {{end}} {{block "js" .}} {{end}}
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  {{block "pageTitle" .}}{{end}}
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+  <link rel="stylesheet" href="/static/css/root.css" />
+  {{block "styles" .}}{{end}}
+  <script src="/static/js/htmx.min.js"></script>
+</head>
+
+<body>
+  <!-- dark theme toggle (written by chatGPT) -->
+  <!-- <div class="z-10 flex top-10 right-10 items-center space-x-2 absolute">
+    <span class="text-gray-600 dark:text-gray-400">Dark</span>
+    <div
+      class="relative w-12 h-6 bg-gray-300 dark:bg-gray-700 rounded-full cursor-pointer transition-colors duration-300 ease-in-out"
+      onclick="toggleDarkMode()">
+      <div
+        class="absolute top-0.5 left-0.5 w-5 h-5 bg-white dark:bg-gray-400 rounded-full shadow-md transition-transform transform duration-300 ease-in-out"
+        id="toggle-knob"></div>
+    </div>
+    <span class="text-gray-600 dark:text-gray-400">Light</span>
+  </div> -->
+  <!-- end dark theme toggle -->
+  <!-- background (written by chatGPT)-->
+  <!-- end background -->
+
+  <div
+    class="root-container bg-gray-100 dark:bg-gray-900 dark:text-gray-200 flex items-center justify-center min-h-screen">
+    <div class="alphabet-texture-background absolute inset-0 z-0">
+      <!-- Generate alphabet characters -->
+    </div>
+    <script>
+      const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      const container = document.querySelector('.absolute.inset-0');
+      const animas = [
+        "ease-out",
+        "ease-in-out",
+        "ease-in",
+        "ease",
+        "cubic-bezier(0.075, 0.82, 0.165, 1)",
+        "cubic-bezier(0.95, 0.05, 0.795, 0.035)",
+      ]
+
+      const randomAni = () => {
+        return `move 3s ${animas[Math.floor(Math.random() * animas.length)]}`
+      }
+      const randomPos = () => {
+        const xMove = (Math.random() * 80 - 40) + 'px'; // Random X movement
+        const yMove = (Math.random() * 80 - 40) + 'px'; // Random Y movement
+        const rotation = (Math.random() * 360) + 'deg'; // Random rotation angle
+        return {
+          xMove,
+          yMove,
+          rotation,
+        }
+      }
+      const setMove = (
+        charater
+      ) => {
+        charater.style.setProperty('--pre-x-move', charater.style.getPropertyValue('--x-move'));
+        charater.style.setProperty('--pre-y-move', charater.style.getPropertyValue('--y-move'));
+        charater.style.setProperty('--pre-rotation', charater.style.getPropertyValue('--rotation'));
+        const {
+          xMove,
+          yMove,
+          rotation,
+        } = randomPos()
+        charater.style.setProperty('--x-move', xMove);
+        charater.style.setProperty('--y-move', yMove);
+        charater.style.setProperty('--rotation', rotation);
+        charater.style.setProperty('--anim', randomAni());
+      }
+
+
+      const createCharacter = () => {
+        const char = document.createElement('div');
+        char.className = 'character';
+        char.textContent = alphabet[Math.floor(Math.random() * alphabet.length)];
+        char.style.left = `${Math.random() * 100}vw`; // Random horizontal position
+        char.style.top = `${Math.random() * 100}vh`; // Random vertical position
+
+        // Set unique movement values for each character
+        const {
+          xMove,
+          yMove,
+          rotation,
+        } = randomPos()
+        char.style.setProperty('--pre-x-move', 0);
+        char.style.setProperty('--pre-y-move', 0);
+        char.style.setProperty('--pre-rotation', "0deg");
+        char.style.setProperty('--x-move', xMove);
+        char.style.setProperty('--y-move', yMove);
+        char.style.setProperty('--rotation', rotation);
+        char.style.setProperty('--anim', randomAni());
+
+        // Restart the animation after it ends
+        char.addEventListener('animationend', () => {
+          char.style.setProperty('--anim', "none"); // Remove animation to reset state
+          char.offsetHeight; // Restart animation
+          setMove(char)
+        });
+        return char
+      };
+
+
+      // Create multiple characters
+      for (let i = 0; i < 200; i++) {
+        const character = createCharacter();
+        container.appendChild(character)
+      }
+    </script>
+    {{block "content" .}}{{end}}
+  </div>
+  {{block "js" .}}{{end}}
+  <script type="text/javascript">
+    const toggleDarkMode = () => {
+      document.documentElement.classList.toggle("dark");
+      document
+        .getElementById("toggle-knob")
+        .classList.toggle("translate-x-6");
+    };
+  </script>
+</body>
+
 </html>
 {{end}}

@@ -6,22 +6,15 @@ import (
 	"net/http"
 )
 
-type GameController struct {
+type UtilitiesController struct {
 }
 
-func (gc *GameController) HomeController(
+func (gc *UtilitiesController) PageNotFound(
 	w http.ResponseWriter,
 	req *http.Request,
 ) {
-	reqParams := req.URL.Query()
-	game := reqParams.Get("game")
-	if game != "" {
-		http.Redirect(w, req, "/page-not-found", http.StatusTemporaryRedirect)
-		return
-	}
-
-	tmpl, err := template.New("index.html").ParseFiles(
-		"./src/html/pages/index.html",
+	tmpl, err := template.New("not-found.html").ParseFiles(
+		"./src/html/pages/not-found.html",
 		"./src/html/layouts/root.html",
 		// "./src/html/blocks/head.html",
 		// "./src/html/blocks/css.html",
