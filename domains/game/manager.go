@@ -1,6 +1,10 @@
 package game
 
-import "github.com/hoanganh-ng/myhoot/domains/participant"
+import (
+	"github.com/hoanganh-ng/myhoot/domains/participant"
+	"github.com/hoanganh-ng/myhoot/domains/question"
+	customerrors "github.com/hoanganh-ng/myhoot/packages/custom-errors"
+)
 
 type Manager struct {
 	*participant.User
@@ -9,7 +13,7 @@ type Manager struct {
 
 func (manager *Manager) CreateGame() error {
 	if manager.game != nil {
-		return ErrAGameIsNotRelease
+		return customerrors.ErrAGameIsNotRelease
 	}
 	nGame := newGame()
 	manager.game = nGame
@@ -17,7 +21,7 @@ func (manager *Manager) CreateGame() error {
 }
 
 func (manager *Manager) SelectQuestionList(
-	listOfQuestion []Question,
+	listOfQuestion []question.Question,
 ) error {
 	return manager.game.setQuestionList(listOfQuestion)
 }

@@ -2,6 +2,9 @@ package game
 
 import (
 	"sync"
+
+	"github.com/hoanganh-ng/myhoot/domains/participant"
+	customerrors "github.com/hoanganh-ng/myhoot/packages/custom-errors"
 )
 
 const answeredKey = "answered"
@@ -19,13 +22,13 @@ func NewLeaderboard() Leaderboard {
 }
 
 func (lb Leaderboard) AddPlayer(
-	player Player,
+	player participant.Player,
 ) error {
 	defer lb.m.Unlock()
 	lb.m.Lock()
 	_, ok := lb.value[player.Name()]
 	if ok {
-		return ErrPlayerIsAdded
+		return customerrors.ErrPlayerIsAdded
 	}
 	lb.value[player.Name()] = map[string]uint32{
 		answeredKey:  0,
@@ -53,7 +56,7 @@ func (lb *Leaderboard) AddPoint(
 	lb.m.Lock()
 	_, ok := lb.value[playerName]
 	if !ok {
-		return ErrPlayerIsNotExisted
+		return customerrors.ErrPlayerIsNotExisted
 	}
 	lb.value[playerName][answeredKey] += 1
 	if addition > 0 {

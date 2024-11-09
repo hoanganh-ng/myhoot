@@ -1,4 +1,4 @@
-package game
+package customerrors
 
 import "errors"
 

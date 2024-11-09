@@ -1,4 +1,4 @@
-package game
+package question
 
 type Symbol uint8
 
@@ -12,6 +12,20 @@ const (
 type AnswerFromPlayer struct {
 	playerName string
 	symbol     Symbol
+}
+
+func NewAnswerFromPlayer(
+	playerName string,
+	answerSymbol Symbol,
+) AnswerFromPlayer {
+	return AnswerFromPlayer{playerName, answerSymbol}
+}
+
+func (ap AnswerFromPlayer) PlayerName() string {
+	return ap.playerName
+}
+func (ap AnswerFromPlayer) Symbol() Symbol {
+	return ap.symbol
 }
 
 type Answer struct {

@@ -1,10 +1,16 @@
 package game
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/hoanganh-ng/myhoot/domains/participant"
+	"github.com/hoanganh-ng/myhoot/domains/question"
+	customerrors "github.com/hoanganh-ng/myhoot/packages/custom-errors"
+)
 
 type GameService struct {
 	gameRepo     GameRepository
-	questionRepo QuestionRepository
+	questionRepo question.QuestionRepository
 }
 
 const (
@@ -37,7 +43,7 @@ func (gs GameService) RandomQuestion(
 }
 
 func (gs GameService) JoinGame(
-	player *Player,
+	player *participant.Player,
 	gameID string,
 	submittedPWD string,
 ) error {
@@ -47,7 +53,7 @@ func (gs GameService) JoinGame(
 	}
 	correctedPWD := existedGame.Authenticate(submittedPWD)
 	if !correctedPWD {
-		return ErrInvalidGamePwd
+		return customerrors.ErrInvalidGamePwd
 	}
 	err = existedGame.OnPlayerRequestJoin(player)
 	if err != nil {

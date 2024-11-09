@@ -4,6 +4,9 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/hoanganh-ng/myhoot/domains/participant"
+	"github.com/hoanganh-ng/myhoot/domains/question"
+	customerrors "github.com/hoanganh-ng/myhoot/packages/custom-errors"
 )
 
 const (
@@ -20,8 +23,8 @@ type Game struct {
 	state           State
 	manager         *Manager
 	currentQuestion int
-	players         map[string]*Player
-	questions       []Question
+	players         map[string]*participant.Player
+	questions       []question.Question
 	leaderboard     Leaderboard
 	pwd             string
 }
@@ -30,25 +33,25 @@ func (game Game) Authenticate(pwd string) bool {
 	return game.pwd == pwd
 }
 
-func (game Game) CurrentQuestion() (Question, error) {
-	var q Question
+func (game Game) CurrentQuestion() (question.Question, error) {
+	var q question.Question
 	if !game.state.Is(Started) {
-		return q, ErrGameIsNotStartYet
+		return q, customerrors.ErrGameIsNotStartYet
 	}
 	q = game.questions[game.currentQuestion-1]
 	return q, nil
 }
 
-func (game *Game) OnPlayerRequestJoin(player *Player) error {
+func (game *Game) OnPlayerRequestJoin(player *participant.Player) error {
 	if !game.state.Is(Created) {
-		return ErrPlayerCannotJoinTheGame
+		return customerrors.ErrPlayerCannotJoinTheGame
 	}
 	if len(game.players) == 50 {
-		return ErrPlayerCannotJoinTheGame
+		return customerrors.ErrPlayerCannotJoinTheGame
 	}
 	_, ok := game.players[player.Name()]
 	if ok {
-		return ErrPlayerIsAdded
+		return customerrors.ErrPlayerIsAdded
 	}
 	game.players[player.Name()] = player
 	return nil
@@ -56,7 +59,7 @@ func (game *Game) OnPlayerRequestJoin(player *Player) error {
 
 func (game *Game) onStart() error {
 	if game.questions == nil {
-		return ErrGameHasNoQuestion
+		return customerrors.ErrGameHasNoQuestion
 	}
 	err := game.state.Started()
 	if err == nil {
@@ -66,7 +69,7 @@ func (game *Game) onStart() error {
 }
 
 func (game *Game) startReceiveAnswer() error {
-	answerChannel := make(chan AnswerFromPlayer)
+	answerChannel := make(chan question.AnswerFromPlayer)
 	defer close(answerChannel)
 	closeChannel := make(chan int8)
 	for _, player := range game.players {
@@ -79,11 +82,11 @@ func (game *Game) startReceiveAnswer() error {
 		select {
 		case playersAnswer := <-answerChannel:
 			addPoint := game.calcAddPoint(
-				currentQuestion.RightAnser().Symbol == playersAnswer.symbol,
+				currentQuestion.RightAnser().Symbol == playersAnswer.Symbol(),
 				time.Since(startTime).Milliseconds(),
 			)
 			game.leaderboard.AddPoint(
-				playersAnswer.playerName,
+				playersAnswer.PlayerName(),
 				addPoint,
 			)
 			answered += 1
@@ -93,7 +96,7 @@ func (game *Game) startReceiveAnswer() error {
 			}
 		case <-time.After(5 * time.Second):
 			close(closeChannel)
-			return ErrQuestionTimeout
+			return customerrors.ErrQuestionTimeout
 		}
 	}
 }
@@ -109,10 +112,10 @@ func (game *Game) calcAddPoint(
 }
 
 func (game *Game) setQuestionList(
-	input []Question,
+	input []question.Question,
 ) error {
 	if !game.state.Is(Created) {
-		return ErrCannotSetListOfQuestion
+		return customerrors.ErrCannotSetListOfQuestion
 	}
 	game.questions = input
 	return nil
@@ -120,7 +123,7 @@ func (game *Game) setQuestionList(
 
 func (game *Game) onNextQuestion() error {
 	if game.currentQuestion == len(game.questions) {
-		return ErrCannotGoToTheNextQuestion
+		return customerrors.ErrCannotGoToTheNextQuestion
 	}
 	game.currentQuestion += 1
 	return game.startReceiveAnswer()
