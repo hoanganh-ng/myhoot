@@ -1,5 +1,6 @@
 package question
 
-type QuestionRepository interface {
+type Repository interface {
+	Create(*Question) error
 	Random(int) ([]Question, error)
 }

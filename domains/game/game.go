@@ -82,7 +82,7 @@ func (game *Game) startReceiveAnswer() error {
 		select {
 		case playersAnswer := <-answerChannel:
 			addPoint := game.calcAddPoint(
-				currentQuestion.RightAnser().Symbol == playersAnswer.Symbol(),
+				currentQuestion.CompareAnswer(playersAnswer.Symbol()),
 				time.Since(startTime).Milliseconds(),
 			)
 			game.leaderboard.AddPoint(

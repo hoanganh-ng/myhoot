@@ -31,7 +31,15 @@ func (ap AnswerFromPlayer) Symbol() Symbol {
 type Answer struct {
 	value     string
 	isCorrect bool
-	Symbol    Symbol
+	symbol    *Symbol
+}
+
+func NewAnswer(answer string, isCorrect bool) Answer {
+	return Answer{value: answer, isCorrect: isCorrect}
+}
+
+func (a *Answer) setSymbol(input *Symbol) {
+	a.symbol = input
 }
 
 func (a Answer) Value() string {

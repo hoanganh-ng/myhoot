@@ -12,6 +12,24 @@ type Question struct {
 	listAnswer []Answer
 }
 
+func New(
+	question string,
+	wrongAnswers []string,
+	rightAnswer string,
+) *Question {
+	listAnswer := make([]Answer, 0)
+	for i := 0; i < len(wrongAnswers); i++ {
+		asw := NewAnswer(wrongAnswers[i], false)
+		listAnswer = append(listAnswer, asw)
+	}
+	listAnswer = append(listAnswer, NewAnswer(rightAnswer, true))
+	return &Question{
+		id:         uuid.New(),
+		value:      question,
+		listAnswer: listAnswer,
+	}
+}
+
 func (q Question) ID() string {
 	return q.id.String()
 }
@@ -20,7 +38,7 @@ func (q Question) Value() string {
 	return q.value
 }
 
-func (q Question) RightAnser() Answer {
+func (q Question) rightAnser() Answer {
 	var rightAnswer Answer
 	for i := 0; i < len(q.listAnswer); i++ {
 		if q.listAnswer[i].IsCorrect() {
@@ -28,6 +46,11 @@ func (q Question) RightAnser() Answer {
 		}
 	}
 	return rightAnswer
+}
+
+func (q Question) CompareAnswer(answer Symbol) bool {
+	rightAnswer := q.rightAnser()
+	return *rightAnswer.symbol == answer
 }
 
 func (q Question) ListAnswer(shuffle bool) []Answer {

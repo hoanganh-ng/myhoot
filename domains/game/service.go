@@ -10,7 +10,7 @@ import (
 
 type GameService struct {
 	gameRepo     GameRepository
-	questionRepo question.QuestionRepository
+	questionRepo question.Repository
 }
 
 const (

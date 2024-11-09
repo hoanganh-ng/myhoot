@@ -1,4 +1,12 @@
 github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
 github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+github.com/gookit/filter v1.2.1 h1:37XivkBm2E5qe1KaGdJ5ZfF5l9NYdGWfLEeQadJD8O4=
+github.com/gookit/filter v1.2.1/go.mod h1:rxynQFr793x+XDwnRmJFEb53zDw0Zqx3OD7TXWoR9mQ=
+github.com/gookit/goutil v0.6.15 h1:mMQ0ElojNZoyPD0eVROk5QXJPh2uKR4g06slgPDF5Jo=
+github.com/gookit/goutil v0.6.15/go.mod h1:qdKdYEHQdEtyH+4fNdQNZfJHhI0jUZzHxQVAV3DaMDY=
+github.com/gookit/validate v1.5.2 h1:i5I2OQ7WYHFRPRATGu9QarR9snnNHydvwSuHXaRWAV0=
+github.com/gookit/validate v1.5.2/go.mod h1:yuPy2WwDlwGRa06fFJ5XIO8QEwhRnTC2LmxmBa5SE14=
 github.com/gorilla/mux v1.8.1 h1:TuBL49tXwgrFYWhqrNgrUNEY92u81SPhu7sTdzQEiWY=
 github.com/gorilla/mux v1.8.1/go.mod h1:AKf9I4AEqPTmMytcMc0KkNouC66V3BtZ4qD5fmWSiMQ=
+golang.org/x/text v0.14.0 h1:ScX5w1eTa3QqT8oi6+ziP7dTV1S2+ALU0bI+0zXKWiQ=
+golang.org/x/text v0.14.0/go.mod h1:18ZOQIKpY8NJVqYksKHtTdi31H5itFRjB5/qKTNYzSU=
