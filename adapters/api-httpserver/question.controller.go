@@ -1,14 +1,14 @@
-package httpserver
+package apihttpserver
 
 import (
 	"net/http"
 
-	"github.com/hoanganh-ng/myhoot/ports/api"
+	"github.com/hoanganh-ng/myhoot/domains/question"
 )
 
 type QuestionController struct {
 	router          *http.ServeMux
-	questionService *api.QuestionService
+	questionService *question.QuestionService
 }
 
 func (c QuestionController) RegisterRoutes() {
