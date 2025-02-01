@@ -1,0 +1,7 @@
+App
+---config
+
+
+1.Auth route
+---login for admin: login with known password
+---join game: if game not existed, redirect homepage

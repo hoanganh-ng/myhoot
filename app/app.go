@@ -6,14 +6,20 @@ import (
 	"os"
 
 	"github.com/gorilla/sessions"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type App struct {
-	config       *Config
-	sessionStore *sessions.CookieStore
+	config         *Config
+	adminHashedPwd []byte
+	sessionStore   *sessions.CookieStore
 }
 
 func New() (*App, error) {
+	adminPassword := os.Getenv("ADMIN_PASSWORD")
+	if adminPassword == "" {
+		return nil, errors.New("unset admin password")
+	}
 	sessionKey := os.Getenv("SESSION_KEY")
 	if sessionKey == "" {
 		return nil, errors.New("unset session key")
@@ -24,10 +30,14 @@ func New() (*App, error) {
 		ErrLog:  errLog,
 		InfoLog: infoLog,
 	}
-
+	hashed, err := bcrypt.GenerateFromPassword([]byte(adminPassword), 14)
+	if err != nil {
+		return nil, err
+	}
 	_app := &App{
-		config:       appConfig,
-		sessionStore: sessions.NewCookieStore([]byte(sessionKey)),
+		config:         appConfig,
+		adminHashedPwd: hashed,
+		sessionStore:   sessions.NewCookieStore([]byte(sessionKey)),
 	}
 	return _app, nil
 }
