@@ -27,3 +27,4 @@ go.work.sum
 #node_modules
 node_modules
 static/css
+needle/questions.json

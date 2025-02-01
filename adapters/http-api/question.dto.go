@@ -1,4 +1,4 @@
-package apihttpserver
+package httpapi
 
 type CreateQuestionRequest struct {
 	Question     string   `json:"question" validate:"required|min_len:1" label:"Question"`

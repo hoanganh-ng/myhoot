@@ -1,4 +1,4 @@
-package apihttpserver
+package httpapi
 
 import "github.com/hoanganh-ng/myhoot/app"
 
